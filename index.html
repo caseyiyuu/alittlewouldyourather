@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>alittlewouldyourather</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: 'Arial', sans-serif;
+      background: radial-gradient(circle at top, #ffe6f0, #ffd1e6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      overflow: hidden;
+    }
+
+    .card {
+      background: white;
+      border-radius: 24px;
+      padding: 32px 28px;
+      width: 340px;
+      text-align: center;
+      box-shadow: 0 20px 40px rgba(255, 77, 136, 0.25);
+      position: relative;
+    }
+
+    h1 {
+      font-size: 1.9rem;
+      margin: 10px 0 8px;
+    }
+
+    h2 {
+      font-size: 1.15rem;
+      color: #ff4d88;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 0.95rem;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    .round {
+      font-size: 0.85rem;
+      color: #999;
+      margin-bottom: 6px;
+    }
+
+    .option {
+      background: linear-gradient(135deg, #ffe0ec, #ffd1e6);
+      border: none;
+      border-radius: 18px;
+      padding: 14px;
+      margin: 10px 0;
+      width: 100%;
+      font-size: 1rem;
+      cursor: pointer;
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .option:hover {
+      transform: translateY(-2px) scale(1.01);
+      box-shadow: 0 8px 18px rgba(255, 77, 136, 0.25);
+    }
+
+    .primary {
+      margin-top: 18px;
+      background: linear-gradient(135deg, #ff4d88, #ff85ad);
+      color: white;
+      border: none;
+      border-radius: 18px;
+      padding: 14px;
+      width: 100%;
+      font-size: 1rem;
+      cursor: pointer;
+      box-shadow: 0 10px 22px rgba(255, 77, 136, 0.35);
+    }
+
+    .hidden { display: none; }
+
+    /* Floating hearts */
+    .heart {
+      position: absolute;
+      color: #ff4d88;
+      font-size: 16px;
+      animation: floatUp 1.2s ease-out forwards;
+      pointer-events: none;
+    }
+
+    @keyframes floatUp {
+      0% { transform: translateY(0) scale(1); opacity: 1; }
+      100% { transform: translateY(-60px) scale(1.6); opacity: 0; }
+    }
+
+    .footer {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: #aaa;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="card" id="card">
+
+    <!-- START SCREEN -->
+    <div id="startScreen">
+      <h1>Valentine’s Day! ♡</h1>
+      <p>
+        Hai baby! (≧◡≦) ♡ <br><br>
+        I made this just for you, with the help of ChatGPT, a cute valentines themed <b>would you rather</b> just for you!
+        I love you so much and I hope you enjoy this 💝<br><br>
+        Btw, I worked super duper unicorns hard for this... sooo ermm... YAH! <br><br>
+        Are you ready to start? ꉂ(˵˃ ᗜ ˂˵)
+      </p>
+      <button class="primary" onclick="startGame()">Start 💌</button>
+    </div>
+
+    <!-- GAME SCREEN -->
+    <div id="gameScreen" class="hidden">
+      <div class="round" id="roundText"></div>
+      <h1>💖 Would you rather...</h1>
+      <h2 id="question"></h2>
+
+      <div id="options"></div>
+
+      <button class="primary hidden" id="nextBtn" onclick="nextRound()">Next 💕</button>
+    </div>
+
+  </div>
+
+  <script>
+    const rounds = [
+      {
+        q: "Hmmm... Would we pick the same thing? 🥹",
+        options: ["Handwritten love letters 💌", "Gifts bought with money 🤑"]
+      },
+
+      {
+        q: "Not valentines related, but...",
+        options: ["Jump off a cliff 🏔️", "Get stung by 20 honeybees 🐝"]
+      },
+
+      {
+        q: "Date night energy 💕",
+        options: ["Movie marathon 🍿", "Late night drives 🚗"]
+    },
+
+      {
+        q: "Not valentines related, but...",
+        options: ["Only poop for the rest of your life 🚫💩", "Only pee for the rest of your life"]
+      },
+
+        {
+        q: "Night time shenanigans 🌙",
+        options: ["Sleep call 📲", "Sleep beside each other! 💖"]
+    },
+
+      {
+        q: "Final round... maybe a little valentine’s related? 🤍",
+        options: ["Get deported to antartica and fight 50 hungry polar bears 🐻‍❄️", "Eat fifty honeybees for breakfast 🐝", "Be my valentine ⸜(｡˃ ᵕ ˂ )⸝♡"]
+      }
+    ];
+
+    let current = 0;
+
+    function startGame() {
+      document.getElementById('startScreen').classList.add('hidden');
+      document.getElementById('gameScreen').classList.remove('hidden');
+      loadRound();
+    }
+
+    function loadRound() {
+      document.getElementById('roundText').innerText = `Round ${current + 1} of ${rounds.length}`;
+      document.getElementById('question').innerText = rounds[current].q;
+      const optionsDiv = document.getElementById('options');
+      optionsDiv.innerHTML = '';
+      document.getElementById('nextBtn').classList.add('hidden');
+
+      rounds[current].options.forEach(text => {
+        const btn = document.createElement('button');
+        btn.className = 'option';
+        btn.innerText = text;
+        btn.onclick = (e) => choose(e);
+        optionsDiv.appendChild(btn);
+      });
+    }
+
+    function choose(e) {
+      spawnHearts(e.clientX, e.clientY);
+      document.getElementById('nextBtn').classList.remove('hidden');
+    }
+
+    function nextRound() {
+      current++;
+      if (current < rounds.length) {
+        loadRound();
+      } else {
+        document.getElementById('card').innerHTML = `
+          <h1>That’s it!</h1>
+          <p>
+            Thank you for playing, babyyy <br>
+            Happy Six Months ! I love you soo much (˶˃𐃷˂˶)
+          </p>
+        `;
+      }
+    }
+
+    function spawnHearts(x, y) {
+      for (let i = 0; i < 6; i++) {
+        const heart = document.createElement('div');
+        heart.className = 'heart';
+        heart.innerText = '💗';
+        heart.style.left = (x - 8 + Math.random() * 16) + 'px';
+        heart.style.top = (y - 8 + Math.random() * 16) + 'px';
+        document.body.appendChild(heart);
+        setTimeout(() => heart.remove(), 1200);
+      }
+    }
+  </script>
+
+</body>
+</html>
